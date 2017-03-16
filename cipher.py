@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import sys
+from DES import DES
 
 def main(*arguments):
 	#Display instructions if improper argument length is given
@@ -59,7 +60,7 @@ def main(*arguments):
 		quit()
 			
 	if cipherName == "DES":
-		cipher = Playfair()
+		cipher = DES()
 		if cipher.setKey(key):
 			if encOrDec == "ENC":
 				output = cipher.encrypt(inputString)
@@ -73,7 +74,7 @@ def main(*arguments):
 			quit()
 	
 	elif cipherName == "AES":
-		cipher = RowTransposition()
+		cipher = AES()
 		if cipher.setKey(key):
 			if encOrDec == "ENC":
 				output = cipher.encrypt(inputString)
