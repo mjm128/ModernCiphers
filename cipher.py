@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import sys
 from DES import DES
+from AES import AES
 
 def main(*arguments):
 	#Display instructions if improper argument length is given
