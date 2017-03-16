@@ -58,13 +58,9 @@ class DES():
 		des_encrypt = des.new(self.key, des.MODE_ECB)
 		
 		#Padding in format of: '\x00 \x00 \x03
-		paddingCounter = 0
+		padNum = 8 - len(plainText) % 8
 		while len(plainText) % 8 != 0:
-			paddingCounter += 1
-			if len(plainText) % 8 == 7:
-				plainText += chr(paddingCounter)
-			else:
-				plainText += '\x00' #add null padding
+			plainText += chr(padNum) #Add padding character
 		
 		plainTextBlock = ""
 		for index in range(0, 8):
@@ -115,7 +111,7 @@ class DES():
 			
 			cipherBlock = cipherText[index:index+8]
 			
-		return plainText
+		return self.removePadding(plainText)
 	
 	def removePadding(self, plainText):
 		padNum = ord(plainText[-1])
@@ -125,7 +121,7 @@ class DES():
 				return plainText[:len(plainText)-1]
 			isPadding = True
 			for index in range(2, padNum):
-				if plainText[-index] != '\x00':
+				if plainText[-index] != chr(padNum):
 					isPadding = False
 		if isPadding:
 			return plainText[:len(plainText)-padNum]
