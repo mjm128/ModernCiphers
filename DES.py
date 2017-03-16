@@ -28,8 +28,14 @@ class DES():
 		cipherText = ""
 		des_encrypt = des.new(self.key, des.MODE_ECB)
 		
+		#Padding in format of: '\x00 \x00 \x03
+		paddingCounter = 0
 		while len(plainText) % 8 != 0:
-			plainText += '\x00' #add null padding
+			paddingCounter += 1
+			if len(plainText) % 8 == 7:
+				plainText += chr(paddingCounter)
+			else:
+				plainText += '\x00' #add null padding
 		
 		for index in range(0, len(plainText), 8):
 			cipherText += des_encrypt.encrypt(plainText[index:index+8])
@@ -44,15 +50,21 @@ class DES():
 		for index in range(0, len(cipherText), 8):
 			plainText += des_decrypt.decrypt(cipherText[index:index+8])
 		
-		return plainText
+		return self.removePadding(plainText)
 	
 	def encryptCBC(self, plainText):
 		cipherText = ""
 		InitVector = os.urandom(8) #Get 8 random bytes
 		des_encrypt = des.new(self.key, des.MODE_ECB)
 		
+		#Padding in format of: '\x00 \x00 \x03
+		paddingCounter = 0
 		while len(plainText) % 8 != 0:
-			plainText += '\x00' #add null padding
+			paddingCounter += 1
+			if len(plainText) % 8 == 7:
+				plainText += chr(paddingCounter)
+			else:
+				plainText += '\x00' #add null padding
 		
 		plainTextBlock = ""
 		for index in range(0, 8):
@@ -103,4 +115,18 @@ class DES():
 			
 			cipherBlock = cipherText[index:index+8]
 			
+		return plainText
+	
+	def removePadding(self, plainText):
+		padNum = ord(plainText[-1])
+		if padNum > 0 and padNum < 8:
+			if padNum == 1 and plainText[-2] != '\x00':
+				#If only one padding character
+				return plainText[:len(plainText)-1]
+			isPadding = True
+			for index in range(2, padNum):
+				if plainText[-index] != '\x00':
+					isPadding = False
+		if isPadding:
+			return plainText[:len(plainText)-padNum]
 		return plainText
