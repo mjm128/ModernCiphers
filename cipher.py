@@ -81,7 +81,7 @@ def main(*arguments):
 			if encOrDec == "ENC":
 				output = cipher.encryptCBC(inputString)
 			elif encOrDec == "DEC":
-				output = cipher.decrypt(inputString)
+				output = cipher.decryptCBC(inputString)
 			else:
 				print("Invalid Encryption/Decryption Option")
 				quit()
