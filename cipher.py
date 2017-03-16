@@ -9,7 +9,8 @@ def main(*arguments):
 		print("\nINVALID ARGUMENTS:")
 		print("./cipher <CIPHER NAME> <KEY> <ENC/DEC> <INPUTFILE> <OUTPUT FILE> <--OPTIONS/-O>")
 		print("\n\tSupported Ciphers:")
-		print("\t- DES: Indicates the 64bit DES cipher\n\t- AES: Indicates 128bit AES cipher")
+		print("\t- DES: Indicates the 64bit DES cipher\n\t- DES_CBC: DES Cipher in CBC Mode")
+		print("\t- AES: Indicates 128bit AES cipher")
 		print("\n\t--OPTIONS - Optional setting: If enabled will ask for converting\n\t\tto lowercase and removing non-alpha characters\n")
 		quit()
 	
@@ -74,6 +75,20 @@ def main(*arguments):
 			print("Failure: Invalid Key")
 			quit()
 	
+	elif cipherName == "DES_CBC":
+		cipher = DES()
+		if cipher.setKey(key):
+			if encOrDec == "ENC":
+				output = cipher.encryptCBC(inputString)
+			elif encOrDec == "DEC":
+				output = cipher.decrypt(inputString)
+			else:
+				print("Invalid Encryption/Decryption Option")
+				quit()
+		else:
+			print("Failure: Invalid Key")
+			quit()
+	
 	elif cipherName == "AES":
 		cipher = AES()
 		if cipher.setKey(key):
@@ -92,9 +107,11 @@ def main(*arguments):
 		print("\nError: Cipher not supported. Please check the name again.")
 		quit()
 		
-	print("\nINPUT: " + inputString)
+	print("\nINPUT: ")
+	print(inputString)
 		
-	print("\nOUTPUT: " + output)
+	print("\nOUTPUT: ")
+	print(output)
 	with open(outFile, "w+") as f:
 		f.write(output)
 		print("\nSuccess!")
