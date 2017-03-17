@@ -115,6 +115,7 @@ class DES():
 	
 	def removePadding(self, plainText):
 		padNum = ord(plainText[-1])
+		isPadding = False
 		if padNum > 0 and padNum < 8:
 			if padNum == 1 and plainText[-2] != '\x00':
 				#If only one padding character
