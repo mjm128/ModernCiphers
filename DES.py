@@ -44,7 +44,6 @@ class DES():
 
 	def decrypt(self, cipherText):
 		plainText = ""
-		print(cipherText)
 		des_decrypt = des.new(self.key, des.MODE_ECB)
 		
 		for index in range(0, len(cipherText), 8):
