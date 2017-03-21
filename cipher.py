@@ -1,7 +1,12 @@
 #!/usr/bin/env python
 import sys
+import os
 from DES import DES
 from AES import AES
+if sys.version[0] == '3':
+	print("Warning: Python 3.X currently not supported.")
+	print("Try again running Python 2.X")
+	quit()
 
 def main(*arguments):
 	#Display instructions if improper argument length is given
