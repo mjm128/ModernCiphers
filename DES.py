@@ -21,7 +21,7 @@ class DES():
 			except:
 				print("Error: Non-hexadecimal digit found")
 				return False
-		print("Error: Key length must be 16 characters long")
+		print("Error: Key length = "+str(len(key))+", Key length must be 16 hex characters long")
 		return False
 
 	def encrypt(self, plainText):
@@ -111,6 +111,12 @@ class DES():
 			cipherBlock = cipherText[index:index+8]
 			
 		return self.removePadding(plainText)
+	
+	def encryptCFB(self, plainText):
+		pass
+
+	def decryptCFB(self, cipherText):
+		pass
 	
 	def removePadding(self, plainText):
 		padNum = ord(plainText[-1])
