@@ -127,7 +127,7 @@ class DES():
 				return plainText[:len(plainText)-1]
 			isPadding = True
 			for index in range(2, padNum):
-				if plainText[-index] != chr(padNum):
+				if plainText[-index] != '\x00':
 					isPadding = False
 		if isPadding:
 			return plainText[:len(plainText)-padNum]
