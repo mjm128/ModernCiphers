@@ -24,8 +24,8 @@ class AES():
 		aes_cipher = aes.new(self.key, aes.MODE_ECB)
 		
 		#Padding in format of: '\x03 \x03 \x03
-		padNum = 8 - len(plainText) % 8
-		while len(plainText) % 8 != 0:
+		padNum = 16 - len(plainText) % 16
+		while len(plainText) % 16 != 0:
 			plainText += chr(padNum) #Add padding character
 		
 		for index in range(0, len(plainText), 16):
