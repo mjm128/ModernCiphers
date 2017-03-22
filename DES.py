@@ -23,19 +23,38 @@ class DES():
 				return False
 		print("Error: Key length = "+str(len(key))+", Key length must be 16 hex characters long")
 		return False
+	
+	def setIV(self, isEncryption):
+		blockBytes = 8
+		IVchoice = None
+		while IVchoice != 'y' and IVchoice != 'n':
+			IVchoice = raw_input("Do you want to enter your own Initialization Vector (Y/N): ").lower()
+		if IVchoice == 'y':
+			validIV = False
+			while not validIV:
+				self.IV = raw_input("Enter IV as "+str(blockBytes*2)+" hex characters: ").replace(" ", "")
+				while len(self.IV) != blockBytes*2:
+					self.IV = raw_input("Length of IV must be 16, try again: ").replace(" ", "")
+				try:
+					self.IV = binascii.unhexlify(self.IV)
+					validIV = True
+				except:
+					print("Invalid IV: Non-hex character detected")
+			return True
+		else:
+			if isEncryption:
+				self.IV = os.urandom(blockBytes) #Get 8 random bytes
+				print("Randomly Generated IV: " + binascii.hexlify(self.IV))
+			return False
 
 	def encrypt(self, plainText):
 		cipherText = ""
 		des_encrypt = des.new(self.key, des.MODE_ECB)
 		
-		#Padding in format of: '\x00 \x00 \x03
-		paddingCounter = 0
+		#Padding in format of: '\x03 \x03 \x03
+		padNum = 8 - len(plainText) % 8
 		while len(plainText) % 8 != 0:
-			paddingCounter += 1
-			if len(plainText) % 8 == 7:
-				plainText += chr(paddingCounter)
-			else:
-				plainText += '\x00' #add null padding
+			plainText += chr(padNum) #Add padding character
 		
 		for index in range(0, len(plainText), 8):
 			cipherText += des_encrypt.encrypt(plainText[index:index+8])
@@ -53,10 +72,13 @@ class DES():
 	
 	def encryptCBC(self, plainText):
 		cipherText = ""
-		InitVector = os.urandom(8) #Get 8 random bytes
+		if not self.setIV(True):
+			#IV was generated so store in first bytes of cipherText
+			cipherText += str(self.IV)
+		
 		des_encrypt = des.new(self.key, des.MODE_ECB)
 		
-		#Padding in format of: '\x00 \x00 \x03
+		#Padding in format of: '\x03 \x03 \x03
 		padNum = 8 - len(plainText) % 8
 		while len(plainText) % 8 != 0:
 			plainText += chr(padNum) #Add padding character
@@ -64,9 +86,7 @@ class DES():
 		plainTextBlock = ""
 		for index in range(0, 8):
 			#XOR IV with first block of Text (8 bytes) 
-			plainTextBlock += chr(ord(InitVector[index]) ^ ord(plainText[index]))
-			#Now store the IV to the first 8 bytes of the cipherText
-			cipherText = str(InitVector)
+			plainTextBlock += chr(ord(self.IV[index]) ^ ord(plainText[index]))
 		
 		for index in range(0, len(plainText), 8):
 			cipherBlock = des_encrypt.encrypt(plainTextBlock)
@@ -85,8 +105,10 @@ class DES():
 	
 	def decryptCBC(self, cipherText):
 		plainText = ""
-		InitVector = cipherText[0:8] #Grab IV from cipherText
-		cipherText = cipherText[8:] #Remove IV from cipherText
+		if not self.setIV(False):
+			#This means the IV is stored in the cipherText
+			self.IV = cipherText[0:8] #Grab IV from cipherText
+			cipherText = cipherText[8:] #Remove IV from cipherText
 		
 		des_decrypt = des.new(self.key, des.MODE_ECB)
 		
@@ -97,7 +119,7 @@ class DES():
 				#Now take first block of IV and XOR with output of decryption
 				XOR = [None] * 8
 				for element in range(0, 8):
-					XOR[element] = chr(ord(InitVector[element]) ^ ord(plainTextBlock[element]))
+					XOR[element] = chr(ord(self.IV[element]) ^ ord(plainTextBlock[element]))
 				plainText += "".join(XOR)
 			
 			elif index+8 <= len(cipherText):
@@ -120,14 +142,15 @@ class DES():
 	
 	def removePadding(self, plainText):
 		padNum = ord(plainText[-1])
+		padChar = plainText[-1]
 		isPadding = False
 		if padNum > 0 and padNum < 8:
-			if padNum == 1 and plainText[-2] != '\x00':
+			if padNum == 1 and plainText[-2] != padChar:
 				#If only one padding character
 				return plainText[:len(plainText)-1]
 			isPadding = True
 			for index in range(2, padNum):
-				if plainText[-index] != '\x00':
+				if plainText[-index] != padChar:
 					isPadding = False
 		if isPadding:
 			return plainText[:len(plainText)-padNum]
