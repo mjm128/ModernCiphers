@@ -22,7 +22,7 @@ def main(*arguments):
 		quit()
 	
 	cipherName = arguments[1].upper()
-	key = arguments[2]
+	key = arguments[2].replace(" ", "")
 	encOrDec = arguments[3].upper()
 	inFile = arguments[4]
 	outFile = arguments[5]

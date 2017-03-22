@@ -13,11 +13,38 @@ import binascii
 class AES():
 
 	def setKey(self, key):
-		if len(key) == 16:
-			self.key = key
-			return True
-		print("Error: Key length = "+str(len(key))+", Key length must be 16 ascii characters long")
+		if len(key) == 32:
+			try:
+				self.key = str(binascii.unhexlify(key))
+				return True
+			except:
+				print("Error: Non-hexadecimal digit found")
+				return False
+		print("Error: Key length = "+str(len(key))+", Key length must be 32 hex characters long")
 		return False
+	
+	def setIV(self, isEncryption):
+		blockBytes = 16
+		IVchoice = None
+		while IVchoice != 'y' and IVchoice != 'n':
+			IVchoice = raw_input("Do you want to enter your own Initialization Vector (Y/N): ").lower()
+		if IVchoice == 'y':
+			validIV = False
+			while not validIV:
+				self.IV = raw_input("Enter IV as "+str(blockBytes*2)+" hex characters: ").replace(" ", "")
+				while len(self.IV) != blockBytes*2:
+					self.IV = raw_input("Length of IV must be "+str(blockBytes*2)+", try again: ").replace(" ", "")
+				try:
+					self.IV = binascii.unhexlify(self.IV)
+					validIV = True
+				except:
+					print("Invalid IV: Non-hex character detected")
+			return True
+		else:
+			if isEncryption:
+				self.IV = os.urandom(blockBytes) #Get 16 random bytes
+				print("Randomly Generated IV: " + binascii.hexlify(self.IV))
+			return False
 
 	def encrypt(self, plainText):
 		cipherText = ""
