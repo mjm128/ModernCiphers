@@ -23,14 +23,10 @@ class AES():
 		cipherText = ""
 		aes_cipher = aes.new(self.key, aes.MODE_ECB)
 		
-		#Padding in format of: '\x00 \x00 \x03
-		paddingCounter = 0
-		while len(plainText) % 16 != 0:
-			paddingCounter += 1
-			if len(plainText) % 16 == 15:
-				plainText += chr(paddingCounter)
-			else:
-				plainText += '\x00' #add null padding
+		#Padding in format of: '\x03 \x03 \x03
+		padNum = 8 - len(plainText) % 8
+		while len(plainText) % 8 != 0:
+			plainText += chr(padNum) #Add padding character
 		
 		for index in range(0, len(plainText), 16):
 			cipherText += aes_cipher.encrypt(plainText[index:index+16])
@@ -60,14 +56,15 @@ class AES():
 	
 	def removePadding(self, plainText):
 		padNum = ord(plainText[-1])
+		padChar = plainText[-1]
 		isPadding = False
 		if padNum > 0 and padNum < 16:
-			if padNum == 1 and plainText[-2] != '\x00':
+			if padNum == 1 and plainText[-2] != padChar:
 				#If only one padding character
 				return plainText[:len(plainText)-1]
 			isPadding = True
 			for index in range(2, padNum):
-				if plainText[-index] != '\x00':
+				if plainText[-index] != padChar:
 					isPadding = False
 		if isPadding:
 			return plainText[:len(plainText)-padNum]
