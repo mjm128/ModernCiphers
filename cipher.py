@@ -15,9 +15,9 @@ def main(*arguments):
 		print("./cipher <CIPHER NAME> <KEY> <ENC/DEC> <INPUTFILE> <OUTPUT FILE> <--OPTIONS/-O>")
 		print("\n\tSupported Ciphers:")
 		print("\t- DES: Indicates the 64bit DES cipher")
-		print("\t- DES_CBC: DES Cipher in CBC Mode\n\t- DES_CFB: DES Cipher in CFB Mode\n")
+		print("\t- DES-CBC: DES Cipher in CBC Mode\n\t- DES-CFB: DES Cipher in CFB Mode\n")
 		print("\t- AES: Indicates 128bit AES cipher")
-		print("\t- AES_CBC: AES Cipher in CBC Mode\n\t- AES_CFB: AES Cipher in CFB Mode")
+		print("\t- AES-CBC: AES Cipher in CBC Mode\n\t- AES-CFB: AES Cipher in CFB Mode")
 		print("\n\t--OPTIONS - Optional setting: If enabled will ask for converting\n\t\tto lowercase and removing non-alpha characters\n")
 		quit()
 	
@@ -82,7 +82,7 @@ def main(*arguments):
 			print("Failure: Invalid Key")
 			quit()
 	
-	elif cipherName == "DES_CBC":
+	elif cipherName == "DES-CBC":
 		cipher = DES()
 		if cipher.setKey(key):
 			if encOrDec == "ENC":
@@ -96,13 +96,13 @@ def main(*arguments):
 			print("Failure: Invalid Key")
 			quit()
 	
-	elif cipherName == "DES_CFB":
+	elif cipherName == "DES-CFB":
 		cipher = DES()
 		if cipher.setKey(key):
 			if encOrDec == "ENC":
 				output = cipher.encryptCFB(inputString)
 			elif encOrDec == "DEC":
-				output = cipher.decryptCFC(inputString)
+				output = cipher.decryptCFB(inputString)
 			else:
 				print("Invalid Encryption/Decryption Option")
 				quit()
@@ -124,7 +124,7 @@ def main(*arguments):
 			print("Failure: Invalid Key")
 			quit()
 	
-	elif cipherName == "AES_CBC":
+	elif cipherName == "AES-CBC":
 		cipher = AES()
 		if cipher.setKey(key):
 			if encOrDec == "ENC":
@@ -138,7 +138,7 @@ def main(*arguments):
 			print("Failure: Invalid Key")
 			quit()
 	
-	elif cipherName == "AES_CFB":
+	elif cipherName == "AES-CFB":
 		cipher = AES()
 		if cipher.setKey(key):
 			if encOrDec == "ENC":
