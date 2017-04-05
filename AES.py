@@ -2,7 +2,7 @@ import sys
 try:
 	from Crypto.Cipher import AES as aes
 except ImportError as error:
-	print("\nImport Error: Please install pyctrypto")
+	print("\nImport Error: Please install pycrypto")
 	if sys.version[0] == '2':
 		version = ""
 	if sys.version[0] == '3':
