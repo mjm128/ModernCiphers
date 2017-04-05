@@ -1,3 +1,4 @@
+import sys
 try:
 	from Crypto.Cipher import DES as des
 except ImportError as error:

@@ -1,3 +1,4 @@
+import sys
 try:
 	from Crypto.Cipher import AES as aes
 except ImportError as error:
